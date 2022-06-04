@@ -6,7 +6,16 @@
 	let userPassword;
 	let errorM;
 
-	async function handleClick() {
+	// Funktion, um nach dem Login die Projekte des Users abzurufen
+	async function getProjects(user) {
+		const projects = await fetch('/interface', {
+			method: 'POST',
+			body: `${user.id}`
+		});
+		//console.log(user.id);
+	}
+
+	async function handleLogin() {
 		errorM = null;
 		try {
 			const { error, session } = await supabase.auth.signIn({
@@ -14,6 +23,8 @@
 				password: userPassword.value
 			});
 			user.set(session);
+			//console.log(session);
+			getProjects(session.user);
 		} catch (error) {
 			if (error) {
 				errorM = error.message;
@@ -24,7 +35,7 @@
 
 <input bind:this={userName} type="text" placeholder="Account" />
 <input bind:this={userPassword} type="password" placeholder="password" />
-<button on:click={handleClick}>Login</button>
+<button on:click={handleLogin}>Login</button>
 
 {#if errorM}
 	<h1>{errorM}</h1>
